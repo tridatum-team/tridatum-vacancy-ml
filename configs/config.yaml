@@ -1,0 +1,106 @@
+# 빈집 예측 파이프라인 설정 파일 (개발 서버)
+# 환경변수 pipeline_env로 dev/prod 선택 (기본값: dev)
+
+# 공통 설정
+common:
+  paths:
+    # base_path: "C:\\Users\\server\\Desktop\\유틸\\vacant_pr\\데이터"
+    # base_path: "/home/was/project/binzib-deploy/binzib_pipeline"
+    base_path: "/data/binzib_output"
+    xy_mapper_path: "/home/was/project/data/집계구_shp/bnd_oa_00_2024_2Q.shp"
+    external_oa_path: "/home/was/project/data/외부_집계구_v1.csv"
+    external_facility_path: "/home/was/project/data/외부_시설_외국인_기초수급_v1.csv"
+
+  # Oracle DB 설정
+  oracle:
+    enable: true
+    host: "10.2.14.103"
+    port: 1521
+    service_name: "KREICDB"
+    user: "BIS_WEB"
+    password: "Rhdrks12!@"
+    # client_path: "C:\\Program Files\\QGIS 3.40.11\\bin"
+    client_path: "/data/bts-ai-compose/api/embedder/instantclient_23_26"
+    
+  oa_boundary:
+    source: "db"
+    table_name: "sgis_stats_area_boundary" # 테이블명 확인
+    geometry_column: "geom"
+    oa_cd_column: "stats_area_cd"
+    base_year_column: "base_year"
+
+  # Step 1 설정
+  step1:
+    distance_threshold: 2.0
+    remove_unmapped: true
+    main_table: "ML_BIS_WEB_TOT_BLDG_MAIN"
+    energy_table: "ENGY_USE_YEAR_PT"
+
+  # Step 2 설정
+  step2:
+    # 추가 설정 가능
+
+  # Step 3 설정
+  step3:
+    k_min: 2
+    k_max: 11
+    k_final: 5  # null이면 자동 선택
+
+  # Step 4 설정
+  step4:
+    top_n_features: 30
+    use_two_stage: true
+    use_gwr: false
+
+  # Step 5 설정
+  step5:
+    use_cluster_ensemble: true
+
+  # Step 6 설정 (5년 예측)
+  step6:
+    base_year: 2024
+    target_years:
+      - 2025
+      - 2026
+      - 2027
+      - 2028
+      - 2029
+
+  # 파이프라인 로그 설정
+  pipeline_log:
+    enable: true
+    status_values:
+      start: "시작"
+      step1: "전처리"
+      step2: "파생변수"
+      step3: "클러스터"
+      step4: "학습"
+      step5: "예측"
+      step6: "예측(5년)"
+      complete: "완료"
+      failed: "실패"
+
+
+dev:
+  # PostgreSQL DB 설정 (개발서버)
+  postgresql:
+    enable: true
+    host: "10.2.61.197"
+    port: 5432
+    database: "bts-ai"
+    user: "bts_ai"
+    password: "reb123!@#"
+
+prod:
+  # PostgreSQL DB 설정 (운영서버)
+  postgresql:
+    enable: true
+    host: "10.2.61.208"
+    port: 9999
+    database: "postgres"
+    user: "bts_ai"
+    password: "reb123!@#"
+
+
+
+
