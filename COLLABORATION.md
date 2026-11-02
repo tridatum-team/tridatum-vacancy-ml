@@ -1,6 +1,6 @@
 # 공동작업 안내
 
-저장소: https://github.com/Gyuhyeon-Eom/vacant-house-prediction
+저장소: https://github.com/tridatum-team/vacant-house-prediction
 
 ## 실행과 구성
 
